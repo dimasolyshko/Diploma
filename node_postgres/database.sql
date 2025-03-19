@@ -40,3 +40,11 @@ CREATE TABLE food_nutrients (
     nutrient_id INT REFERENCES nutrients(id) ON DELETE CASCADE,
     amount FLOAT NOT NULL -- Количество данного нутриента в 100г продукта
 );
+
+-- Дополнение данных к пользователям
+ALTER TABLE users 
+ADD COLUMN weight FLOAT NOT NULL,
+ADD COLUMN height FLOAT NOT NULL,
+ADD COLUMN age INT NOT NULL,
+ADD COLUMN gender VARCHAR(10) CHECK (gender IN ('male', 'female')) NOT NULL,
+ADD COLUMN activity_level VARCHAR(20) CHECK (activity_level IN ('sedentary', 'light', 'moderate', 'active', 'very_active')) NOT NULL,
