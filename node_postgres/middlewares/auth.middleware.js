@@ -15,7 +15,6 @@ module.exports = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        console.error("JWT Error:", error);
         res.status(401).json({ message: 'Неверный или просроченный токен' });
     }
 };

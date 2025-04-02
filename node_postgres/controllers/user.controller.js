@@ -94,6 +94,7 @@ class UserController {
         }
     }
 
+    //обновление информации о пользователе
     async updateProfile(req, res) {
         try {
             const userId = req.user.userId;

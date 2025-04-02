@@ -4,12 +4,12 @@ const authMiddleware = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 
-router.post('/register', UserController.register);  // Регистрация
-router.post('/login', UserController.login);        // Авторизация
+router.post('/register', UserController.register);  
+router.post('/login', UserController.login);        
 
-router.get('/me', authMiddleware, UserController.getUserInfo); // Получение информации о пользователе (требуется токен)
+router.get('/me', authMiddleware, UserController.getUserInfo); 
 
-router.patch('/update', authMiddleware, UserController.updateProfile); // Обновление профиля
-router.patch('/update-password', authMiddleware, UserController.updatePassword); // Обновление пароля
+router.patch('/update', authMiddleware, UserController.updateProfile); 
+router.patch('/update-password', authMiddleware, UserController.updatePassword);
 
 module.exports = router;

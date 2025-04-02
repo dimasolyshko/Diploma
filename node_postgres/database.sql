@@ -48,3 +48,9 @@ ADD COLUMN height FLOAT NOT NULL,
 ADD COLUMN age INT NOT NULL,
 ADD COLUMN gender VARCHAR(10) CHECK (gender IN ('male', 'female')) NOT NULL,
 ADD COLUMN activity_level VARCHAR(20) CHECK (activity_level IN ('sedentary', 'light', 'moderate', 'active', 'very_active')) NOT NULL,
+
+-- Дополнение данных к продуктам (сделано для добавления новых продуктов, привязанных к пользователю)
+ALTER TABLE foods ADD COLUMN user_id INT REFERENCES users(id) ON DELETE CASCADE; 
+
+-- Дополнение данных к продуктам (сделано для избежания краша при удалении продуктов, добавленных в рацион)
+ALTER TABLE foods ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
