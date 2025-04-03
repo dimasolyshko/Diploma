@@ -10,5 +10,9 @@ router.patch('/update', authMiddleware, FoodController.updateFood);
 router.delete('/delete', authMiddleware, FoodController.deleteFood);
 
 router.post('/log', authMiddleware, FoodController.logFood);
+router.delete('/log', authMiddleware, FoodController.deleteFoodLog);
+router.patch('/log', authMiddleware, FoodController.updateFoodLog);
+
+router.get('/daily', authMiddleware, FoodController.getDailyFood);
 
 module.exports = router;

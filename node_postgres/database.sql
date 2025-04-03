@@ -54,3 +54,6 @@ ALTER TABLE foods ADD COLUMN user_id INT REFERENCES users(id) ON DELETE CASCADE;
 
 -- Дополнение данных к продуктам (сделано для избежания краша при удалении продуктов, добавленных в рацион)
 ALTER TABLE foods ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+-- Дополнение данных к связи пользователя с продуктами с помощью рационов
+ALTER TABLE user_foods ADD COLUMN meal_type VARCHAR(20) CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack'));

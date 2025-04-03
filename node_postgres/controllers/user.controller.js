@@ -58,7 +58,6 @@ class UserController {
         }
     }
 
-    // Получение информации о текущем пользователе
     async getUserInfo(req, res) {
         try {
             const userId = req.user.userId;
@@ -66,18 +65,18 @@ class UserController {
                 'SELECT id, username, email, weight, height, age, gender, activity_level, created_at FROM users WHERE id = $1',
                 [userId]
             );
-
+    
             if (user.rows.length === 0) {
                 return res.status(404).json({ message: 'Пользователь не найден' });
             }
-
+    
             const userData = user.rows[0];
-
+    
             // Рассчитываем BMR (основной обмен веществ)
             let BMR = userData.gender === 'male'
                 ? 88.36 + (13.4 * userData.weight) + (4.8 * userData.height) - (5.7 * userData.age)
                 : 447.6 + (9.2 * userData.weight) + (3.1 * userData.height) - (4.3 * userData.age);
-
+    
             const activityMultiplier = {
                 sedentary: 1.2,
                 light: 1.375,
@@ -85,8 +84,19 @@ class UserController {
                 active: 1.725,
                 very_active: 1.9
             };
-            userData.daily_calories_goal = BMR * (activityMultiplier[userData.activity_level] || 1.2);
-
+            const dailyCalories = BMR * (activityMultiplier[userData.activity_level] || 1.2);
+    
+            // Рассчитываем рекомендуемые БЖУ
+            const proteinsGoal = (dailyCalories * 0.2 / 4).toFixed(1); // 20% калорий на белки (4 ккал/г)
+            const fatsGoal = (dailyCalories * 0.30 / 9).toFixed(1);     // 30% калорий на жиры (9 ккал/г)
+            const carbsGoal = (dailyCalories * 0.5 / 4).toFixed(1);    // 50% калорий на углеводы (4 ккал/г)
+    
+            // Добавляем вычисленные значения в ответ
+            userData.daily_calories_goal = dailyCalories;
+            userData.daily_proteins_goal = parseFloat(proteinsGoal);
+            userData.daily_fats_goal = parseFloat(fatsGoal);
+            userData.daily_carbs_goal = parseFloat(carbsGoal);
+    
             res.json(userData);
         } catch (error) {
             console.error(error);
