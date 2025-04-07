@@ -9,22 +9,36 @@ class UserController {
         try {
             const { username, email, password, weight, height, age, gender, activity_level } = req.body;
 
-            const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-            if (existingUser.rows.length > 0) {
+            // Проверка username
+            const usernameExists = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+            if (usernameExists.rows.length > 0) {
+                return res.status(400).json({ message: 'Имя пользователя уже занято, выберите другое' });
+            }
+
+            // Проверка email
+            const emailExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+            if (emailExists.rows.length > 0) {
                 return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-
             const newUser = await pool.query(
                 `INSERT INTO users (username, email, password_hash, weight, height, age, gender, activity_level) 
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
                 [username, email, hashedPassword, weight, height, age, gender, activity_level]
             );
 
             res.status(201).json({ message: 'Регистрация успешна', user: newUser.rows[0] });
         } catch (error) {
             console.error(error);
+            if (error.code === '23505') {
+                if (error.constraint === 'users_username_key') {
+                    return res.status(400).json({ message: 'Имя пользователя уже занято, выберите другое' });
+                }
+                if (error.constraint === 'users_email_key') {
+                    return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
+                }
+            }
             res.status(500).json({ message: 'Ошибка сервера' });
         }
     }
@@ -65,18 +79,18 @@ class UserController {
                 'SELECT id, username, email, weight, height, age, gender, activity_level, created_at FROM users WHERE id = $1',
                 [userId]
             );
-    
+
             if (user.rows.length === 0) {
                 return res.status(404).json({ message: 'Пользователь не найден' });
             }
-    
+
             const userData = user.rows[0];
-    
+
             // Рассчитываем BMR (основной обмен веществ)
             let BMR = userData.gender === 'male'
                 ? 88.36 + (13.4 * userData.weight) + (4.8 * userData.height) - (5.7 * userData.age)
                 : 447.6 + (9.2 * userData.weight) + (3.1 * userData.height) - (4.3 * userData.age);
-    
+
             const activityMultiplier = {
                 sedentary: 1.2,
                 light: 1.375,
@@ -85,18 +99,18 @@ class UserController {
                 very_active: 1.9
             };
             const dailyCalories = BMR * (activityMultiplier[userData.activity_level] || 1.2);
-    
+
             // Рассчитываем рекомендуемые БЖУ
             const proteinsGoal = (dailyCalories * 0.2 / 4).toFixed(1); // 20% калорий на белки (4 ккал/г)
             const fatsGoal = (dailyCalories * 0.30 / 9).toFixed(1);     // 30% калорий на жиры (9 ккал/г)
             const carbsGoal = (dailyCalories * 0.5 / 4).toFixed(1);    // 50% калорий на углеводы (4 ккал/г)
-    
+
             // Добавляем вычисленные значения в ответ
             userData.daily_calories_goal = dailyCalories;
             userData.daily_proteins_goal = parseFloat(proteinsGoal);
             userData.daily_fats_goal = parseFloat(fatsGoal);
             userData.daily_carbs_goal = parseFloat(carbsGoal);
-    
+
             res.json(userData);
         } catch (error) {
             console.error(error);
@@ -117,7 +131,7 @@ class UserController {
             let query = 'UPDATE users SET ';
             let fields = [];
             let values = [];
-            
+
             if (username) {
                 fields.push('username = $' + (fields.length + 1));
                 values.push(username);
