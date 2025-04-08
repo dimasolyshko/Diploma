@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-import './Register.css'; // Импортируем стили
+import { register } from '../slices/authSlice';
+import spinner from '../assets/spinner.gif'; 
+import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,31 +16,22 @@ const Register = () => {
     gender: 'male',
     activity_level: 'moderate',
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      await api.post('/users/register', formData);
-      setSuccess('Регистрация успешна! Перенаправляем на страницу входа...');
-      setTimeout(() => navigate('/login'), 2000);
-    } catch (err) {
-      console.error('Ошибка запроса:', err.response);
-      setError(err.response?.data?.message || 'Ошибка регистрации');
-    } finally {
-      setLoading(false);
-    }
+    dispatch(register(formData)).then((result) => {
+      if (result.meta.requestStatus === 'fulfilled') {
+        setTimeout(() => navigate('/login'), 1000);
+      }
+    });
   };
 
   return (
@@ -87,9 +80,8 @@ const Register = () => {
           </select>
         </div>
         {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
         <button type="submit" disabled={loading}>
-          {loading ? 'Загрузка...' : 'Зарегистрироваться'}
+          {loading ? <img src={spinner} alt="Loading" className="spinner" /> : 'Зарегистрироваться'}
         </button>
       </form>
     </div>

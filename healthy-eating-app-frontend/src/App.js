@@ -1,26 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { setAuthToken } from './utils/api';
+import PublicRoute from './components/PublicRoute';
+import './App.css';
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-
-  useEffect(() => {
-    if (token) {
-      setAuthToken(token);
-    }
-  }, [token]);
-
   return (
-    <div>
-      <h1>Healthy Eating App</h1>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<div>Добро пожаловать! <a href="/login">Войти</a> | <a href="/register">Регистрация</a></div>} />
-      </Routes>
+    <div className="app-container">
+      <Header />
+      <main className="main-content">
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
+          <Route path="/" element={<div className="welcome">Добро пожаловать в Healthy Eating App!</div>} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
   );
 }
