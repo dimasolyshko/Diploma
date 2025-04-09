@@ -1,4 +1,3 @@
-// src/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api, { setAuthToken } from '../utils/api';
 
@@ -31,6 +30,26 @@ export const fetchUserInfo = createAsyncThunk('auth/fetchUserInfo', async (_, { 
     return rejectWithValue(err.response?.data?.message || 'Ошибка загрузки данных пользователя');
   }
 });
+
+export const updateProfile = createAsyncThunk('auth/updateProfile', async (updatedData, { rejectWithValue }) => {
+    try {
+      const response = await api.patch('/users/update', updatedData);
+      return response.data.user;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Ошибка обновления профиля');
+    }
+  }
+);
+
+export const updatePassword = createAsyncThunk('auth/updatePassword', async ({ oldPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch('/users/update-password', { oldPassword, newPassword });
+      return response.data.message; 
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Ошибка изменения пароля');
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -93,6 +112,33 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(fetchUserInfo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload; 
+        state.success = 'Профиль успешно обновлён!';
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = null;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload; 
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

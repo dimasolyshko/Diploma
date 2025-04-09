@@ -27,7 +27,7 @@ const Header = () => {
         <nav className="nav">
           {token ? (
             <div className="auth-nav">
-              <span className="username">{user?.username || ''}</span>
+              <Link to="/profile" className="nav-link">{user?.username || ''}</Link>
               <button className="logout-btn" onClick={handleLogout}>
                 Выйти
               </button>
