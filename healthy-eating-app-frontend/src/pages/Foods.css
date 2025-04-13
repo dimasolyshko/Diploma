@@ -1,0 +1,273 @@
+.foods-wrapper {
+  width: 100%;
+  padding: 40px 20px;
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+}
+
+.foods-container {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.foods-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.foods-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  border: 2px solid #007bff;
+  margin-bottom: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.foods-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.foods-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px;
+  border-left: 4px solid #007bff;
+  padding-left: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.foods-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.foods-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.save-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #28a745;
+  color: white;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.save-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #dc3545;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #c82333;
+}
+
+.spinner-btn {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.success {
+  color: #28a745;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.spinner {
+  display: block;
+  margin: 50px auto;
+  width: 60px;
+  height: 60px;
+}
+
+.foods-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.foods-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.foods-table th,
+.foods-table td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 16px;
+  color: #333;
+}
+
+.foods-table th {
+  background-color: #e9ecef;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.foods-table th.sortable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.foods-table th.sortable:hover {
+  background-color: #d3d7db;
+}
+
+.foods-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.foods-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.foods-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.foods-table td {
+  font-weight: 500;
+}
+
+.nutrients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nutrients-list li {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.nutrients-list li:last-child {
+  margin-bottom: 0;
+}
+
+.nutrient-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nutrient-select {
+  flex: 3;
+  min-width: 400px;
+}
+
+.nutrient-amount {
+  flex: 2;
+  min-width: 300px;
+}
+
+.add-nutrient-btn,
+.remove-nutrient-btn {
+  padding: 6px 10px;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-nutrient-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.add-nutrient-btn:hover {
+  background-color: #0056b3;
+}
+
+.add-nutrient-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.remove-nutrient-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.remove-nutrient-btn:hover {
+  background-color: #c82333;
+}
+
+.remove-nutrient-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

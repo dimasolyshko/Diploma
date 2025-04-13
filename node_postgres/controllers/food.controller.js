@@ -1,35 +1,26 @@
 const pool = require('../db');
 
 class FoodController {
-    // Добавление продукта с нутриентами
+    //Добавление продукта
     async addFood(req, res) {
         try {
             const userId = req.user ? req.user.userId : null;
             const { name, calories, proteins, fats, carbohydrates, nutrients } = req.body;
 
-            if (!name || !calories || !proteins || !fats || !carbohydrates) {
+            if (!name || calories == null || proteins == null || fats == null || carbohydrates == null) {
                 return res.status(400).json({ message: 'Все поля обязательны' });
             }
 
-            // Проверка на дубликаты
-            let existingFood;
-            if (userId) {
-                existingFood = await pool.query(
-                    `SELECT * FROM foods 
-                     WHERE name = $1 AND user_id = $2 AND is_deleted = FALSE`,
-                    [name, userId]
-                );
-            } else {
-                existingFood = await pool.query(
-                    `SELECT * FROM foods 
-                     WHERE name = $1 AND user_id IS NULL AND is_deleted = FALSE`,
-                    [name]
-                );
-            }
+            // Проверка на дубликаты по имени (глобально)
+            const existingFood = await pool.query(
+                `SELECT * FROM foods 
+             WHERE name = $1 AND is_deleted = FALSE`,
+                [name]
+            );
 
             if (existingFood.rows.length > 0) {
-                return res.status(400).json({ 
-                    message: 'Продукт с таким названием уже существует' 
+                return res.status(400).json({
+                    message: 'Продукт с таким названием уже существует'
                 });
             }
 
@@ -39,18 +30,18 @@ class FoodController {
             // Добавление продукта
             const newFood = await pool.query(
                 `INSERT INTO foods (name, calories, proteins, fats, carbohydrates, user_id, is_deleted) 
-                 VALUES ($1, $2, $3, $4, $5, $6, FALSE) RETURNING *`,
-                [name, calories, proteins, fats, carbohydrates, userId]
+             VALUES ($1, $2, $3, $4, $5, $6, FALSE) RETURNING *`,
+                [name, parseFloat(calories), parseFloat(proteins), parseFloat(fats), parseFloat(carbohydrates), userId]
             );
             const foodId = newFood.rows[0].id;
 
             // Добавление нутриентов, если они указаны
             if (nutrients && Array.isArray(nutrients)) {
                 for (const { nutrient_id, amount } of nutrients) {
-                    if (!nutrient_id || !amount) {
+                    if (!nutrient_id || amount == null || isNaN(amount) || amount <= 0) {
                         await pool.query('ROLLBACK');
-                        return res.status(400).json({ 
-                            message: 'Для каждого нутриента нужны nutrient_id и amount' 
+                        return res.status(400).json({
+                            message: 'Для каждого нутриента нужны nutrient_id и положительное amount'
                         });
                     }
 
@@ -60,53 +51,78 @@ class FoodController {
                     );
                     if (nutrientExists.rows.length === 0) {
                         await pool.query('ROLLBACK');
-                        return res.status(400).json({ 
-                            message: `Нутриент с ID ${nutrient_id} не найден` 
+                        return res.status(400).json({
+                            message: `Нутриент с ID ${nutrient_id} не найден`
                         });
                     }
 
                     await pool.query(
                         `INSERT INTO food_nutrients (food_id, nutrient_id, amount) 
-                         VALUES ($1, $2, $3)`,
-                        [foodId, nutrient_id, amount]
+                     VALUES ($1, $2, $3)`,
+                        [foodId, nutrient_id, parseFloat(amount)]
                     );
                 }
             }
 
             await pool.query('COMMIT');
-            res.status(201).json({ message: 'Продукт добавлен', food: newFood.rows[0] });
+            res.status(201).json({ message: 'Продукт добавлен', food: { ...newFood.rows[0], nutrients } });
         } catch (error) {
             await pool.query('ROLLBACK');
-            console.error(error);
-            res.status(500).json({ message: 'Ошибка сервера' });
+            console.error('Ошибка в addFood:', {
+                message: error.message,
+                stack: error.stack,
+                body: req.body,
+                userId: req.user?.userId,
+            });
+            res.status(500).json({ message: `Ошибка сервера: ${error.message}` });
         }
     }
 
-    // Получение списка продуктов с нутриентами
+    //получение нутриентов
+    async getNutrients(req, res) {
+        try {
+            const nutrients = await pool.query(
+                `SELECT id, name, unit FROM nutrients ORDER BY name`
+            );
+            res.json(nutrients.rows);
+        } catch (error) {
+            console.error('Ошибка в getNutrients:', {
+                message: error.message,
+                stack: error.stack,
+            });
+            res.status(500).json({ message: 'Ошибка сервера при загрузке нутриентов' });
+        }
+    }
+
+    //получение продуктов
     async getFoods(req, res) {
         try {
             const userId = req.user ? req.user.userId : null;
             const foods = await pool.query(
                 `SELECT f.*, 
-                        json_agg(
-                            json_build_object(
-                                'nutrient_id', fn.nutrient_id, 
-                                'amount', fn.amount, 
-                                'name', n.name, 
-                                'unit', n.unit
-                            )
-                        ) FILTER (WHERE fn.nutrient_id IS NOT NULL) AS nutrients
-                 FROM foods f
-                 LEFT JOIN food_nutrients fn ON f.id = fn.food_id
-                 LEFT JOIN nutrients n ON fn.nutrient_id = n.id
-                 WHERE (f.user_id IS NULL OR f.user_id = $1) AND f.is_deleted = FALSE
-                 GROUP BY f.id`,
+                    json_agg(
+                        json_build_object(
+                            'nutrient_id', fn.nutrient_id, 
+                            'amount', fn.amount, 
+                            'name', n.name, 
+                            'unit', n.unit
+                        )
+                    ) FILTER (WHERE fn.nutrient_id IS NOT NULL) AS nutrients
+             FROM foods f
+             LEFT JOIN food_nutrients fn ON f.id = fn.food_id
+             LEFT JOIN nutrients n ON fn.nutrient_id = n.id
+             WHERE (f.user_id IS NULL OR f.user_id = $1) AND f.is_deleted = FALSE
+             GROUP BY f.id`,
                 [userId]
             );
             res.json(foods.rows);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Ошибка сервера' });
+            console.error('Ошибка в getFoods:', {
+                message: error.message,
+                stack: error.stack,
+                userId: req.user?.userId,
+            });
+            res.status(500).json({ message: `Ошибка сервера: ${error.message}` });
         }
     }
 
@@ -121,8 +137,8 @@ class FoodController {
                 [foodId, userId]
             );
             if (food.rows.length === 0) {
-                return res.status(403).json({ 
-                    message: 'Нет доступа к этому продукту или он удалён' 
+                return res.status(403).json({
+                    message: 'Нет доступа к этому продукту или он удалён'
                 });
             }
 
@@ -134,8 +150,8 @@ class FoodController {
                     [name, userId, foodId]
                 );
                 if (existingFood.rows.length > 0) {
-                    return res.status(400).json({ 
-                        message: 'Продукт с таким названием уже существует' 
+                    return res.status(400).json({
+                        message: 'Продукт с таким названием уже существует'
                     });
                 }
             }
@@ -163,8 +179,8 @@ class FoodController {
                 for (const { nutrient_id, amount } of nutrients) {
                     if (!nutrient_id || !amount) {
                         await pool.query('ROLLBACK');
-                        return res.status(400).json({ 
-                            message: 'Для каждого нутриента нужны nutrient_id и amount' 
+                        return res.status(400).json({
+                            message: 'Для каждого нутриента нужны nutrient_id и amount'
                         });
                     }
 
@@ -174,8 +190,8 @@ class FoodController {
                     );
                     if (nutrientExists.rows.length === 0) {
                         await pool.query('ROLLBACK');
-                        return res.status(400).json({ 
-                            message: `Нутриент с ID ${nutrient_id} не найден` 
+                        return res.status(400).json({
+                            message: `Нутриент с ID ${nutrient_id} не найден`
                         });
                     }
 
@@ -207,8 +223,8 @@ class FoodController {
                 [foodId, userId]
             );
             if (food.rows.length === 0) {
-                return res.status(403).json({ 
-                    message: 'Нет доступа к этому продукту или он уже удалён' 
+                return res.status(403).json({
+                    message: 'Нет доступа к этому продукту или он уже удалён'
                 });
             }
 
@@ -230,15 +246,15 @@ class FoodController {
             const { foodId, portionSize, mealType } = req.body;
 
             if (!foodId || !portionSize || !mealType) {
-                return res.status(400).json({ 
-                    message: 'Все поля (foodId, portionSize, mealType) обязательны' 
+                return res.status(400).json({
+                    message: 'Все поля (foodId, portionSize, mealType) обязательны'
                 });
             }
 
             const validMealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
             if (!validMealTypes.includes(mealType)) {
-                return res.status(400).json({ 
-                    message: 'Недопустимый тип приёма пищи. Допустимые значения: breakfast, lunch, dinner, snack' 
+                return res.status(400).json({
+                    message: 'Недопустимый тип приёма пищи. Допустимые значения: breakfast, lunch, dinner, snack'
                 });
             }
 
@@ -268,7 +284,7 @@ class FoodController {
         try {
             const userId = req.user.userId;
             const { logId } = req.body;
-    
+
             const log = await pool.query(
                 `SELECT * FROM user_foods WHERE id = $1 AND user_id = $2`,
                 [logId, userId]
@@ -276,7 +292,7 @@ class FoodController {
             if (log.rows.length === 0) {
                 return res.status(404).json({ message: 'Запись не найдена или нет доступа' });
             }
-    
+
             await pool.query(`DELETE FROM user_foods WHERE id = $1`, [logId]);
             res.json({ message: 'Запись удалена из рациона' });
         } catch (error) {
@@ -290,7 +306,7 @@ class FoodController {
         try {
             const userId = req.user.userId;
             const { logId, portionSize, mealType } = req.body;
-    
+
             const log = await pool.query(
                 `SELECT * FROM user_foods WHERE id = $1 AND user_id = $2`,
                 [logId, userId]
@@ -298,12 +314,12 @@ class FoodController {
             if (log.rows.length === 0) {
                 return res.status(404).json({ message: 'Запись не найдена или нет доступа' });
             }
-    
+
             const validMealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
             if (mealType && !validMealTypes.includes(mealType)) {
                 return res.status(400).json({ message: 'Недопустимый тип приёма пищи' });
             }
-    
+
             await pool.query(
                 `UPDATE user_foods SET portion_size = $1, meal_type = $2 WHERE id = $3`,
                 [portionSize || log.rows[0].portion_size, mealType || log.rows[0].meal_type, logId]
@@ -319,7 +335,7 @@ class FoodController {
     async getDailyFood(req, res) {
         try {
             const userId = req.user.userId;
-            const { date } = req.query; 
+            const { date } = req.query;
 
             if (!date) {
                 return res.status(400).json({ message: 'Параметр date обязателен' });

@@ -9,6 +9,8 @@ router.get('/list', authMiddleware, FoodController.getFoods);
 router.patch('/update', authMiddleware, FoodController.updateFood);
 router.delete('/delete', authMiddleware, FoodController.deleteFood);
 
+router.get('/nutrients', authMiddleware, FoodController.getNutrients);
+
 router.post('/log', authMiddleware, FoodController.logFood);
 router.delete('/log', authMiddleware, FoodController.deleteFoodLog);
 router.patch('/log', authMiddleware, FoodController.updateFoodLog);

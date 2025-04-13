@@ -17,6 +17,9 @@ const Navigation = () => {
         <NavLink to="/privacy" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           Конфиденциальность
         </NavLink>
+        <NavLink to="/foods"  className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          Продукты
+        </NavLink>
       </div>
     </nav>
   );

@@ -7,9 +7,11 @@ import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import Privacy from './pages/Privacy'; // Импортируем Privacy
+import Privacy from './pages/Privacy';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
+import FoodsList from './pages/FoodsList';
+import AddFood from './pages/AddFood';
 import './App.css';
 
 function App() {
@@ -48,6 +50,22 @@ function App() {
             element={
               <PrivateRoute>
                 <Privacy />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/foods"
+            element={
+              <PrivateRoute>
+                <FoodsList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/foods/add"
+            element={
+              <PrivateRoute>
+                <AddFood />
               </PrivateRoute>
             }
           />
