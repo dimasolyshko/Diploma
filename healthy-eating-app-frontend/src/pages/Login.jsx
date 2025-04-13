@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login, fetchUserInfo, clearMessages } from '../slices/authSlice';
 import spinner from '../assets/spinner.gif';
-import './Login.css';
+import styles from './Login.module.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -28,30 +28,32 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className={styles.container}>
       <h2>Вход</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Email:</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className={styles.input}
             required
           />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Пароль:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className={styles.input}
             required
           />
         </div>
-        {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? <img src={spinner} alt="Loading" className="spinner" /> : 'Войти'}
+        {error && <p className={styles.error}>{error}</p>}
+        <button type="submit" className={styles.submitBtn} disabled={loading}>
+          {loading ? <img src={spinner} alt="Loading" className={styles.spinner} /> : 'Войти'}
         </button>
       </form>
     </div>

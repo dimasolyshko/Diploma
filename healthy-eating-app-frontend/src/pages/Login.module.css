@@ -1,5 +1,5 @@
-.register-container {
-  max-width: 900px;
+.container {
+  max-width: 800px;
   margin: 0 auto;
   padding: 30px;
   background-color: #f9f9f9;
@@ -7,25 +7,24 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.register-container h2 {
+.container h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
 }
 
-.form-group {
+.formGroup {
   margin-bottom: 15px;
 }
 
-.form-group label {
+.formGroup label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
   color: #555;
 }
 
-.form-group input,
-.form-group select {
+.formGroup input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -34,8 +33,7 @@
   box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.formGroup input:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
@@ -53,7 +51,7 @@
   margin: 10px 0;
 }
 
-button {
+.submitBtn {
   width: 100%;
   padding: 12px;
   background-color: #007bff;
@@ -68,16 +66,16 @@ button {
   align-items: center;
 }
 
-button:disabled {
+.submitBtn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-button:hover:not(:disabled) {
+.submitBtn:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
 .spinner {
-  width: 100px; 
+  width: 100px;
   height: 100px;
 }

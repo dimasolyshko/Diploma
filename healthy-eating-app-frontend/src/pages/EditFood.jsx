@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { addFood, clearMessages } from '../slices/foodSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+import { updateFood, clearMessages } from '../slices/foodSlice';
 import { fetchNutrients } from '../slices/nutrientSlice';
 import spinner from '../assets/spinner.gif';
 import styles from './Foods.module.css';
 
-const AddFood = () => {
+const EditFood = () => {
   const { user } = useSelector((state) => state.auth);
-  const { loading: foodLoading, formError, success } = useSelector((state) => state.food);
+  const { foods, loading: foodLoading, formError, success } = useSelector((state) => state.food);
   const { nutrients, loading: nutrientLoading, error: nutrientError } = useSelector((state) => state.nutrient);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const food = foods.find((f) => f.id === parseInt(id));
 
   const [formData, setFormData] = useState({
+    foodId: '',
     name: '',
     calories: '',
     proteins: '',
@@ -25,7 +29,25 @@ const AddFood = () => {
 
   useEffect(() => {
     dispatch(fetchNutrients());
-  }, [dispatch]);
+    if (food) {
+      setFormData({
+        foodId: food.id,
+        name: food.name,
+        calories: food.calories.toString(),
+        proteins: food.proteins.toString(),
+        fats: food.fats.toString(),
+        carbohydrates: food.carbohydrates.toString(),
+      });
+      setSelectedNutrients(
+        food.nutrients && food.nutrients.length > 0
+          ? food.nutrients.map((n) => ({
+              nutrient_id: n.nutrient_id.toString(),
+              amount: n.amount.toString(),
+            }))
+          : []
+      );
+    }
+  }, [dispatch, food]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,30 +113,26 @@ const AddFood = () => {
 
     dispatch(clearMessages());
     dispatch(
-      addFood({
+      updateFood({
+        foodId: parseInt(formData.foodId),
         name: formData.name.trim(),
         calories: parseFloat(formData.calories),
         proteins: parseFloat(formData.proteins),
         fats: parseFloat(formData.fats),
         carbohydrates: parseFloat(formData.carbohydrates),
-        nutrients: selectedNutrients,
+        nutrients: selectedNutrients.map((n) => ({
+          nutrient_id: parseInt(n.nutrient_id),
+          amount: parseFloat(n.amount),
+        })),
       })
     ).then((result) => {
       if (result.meta.requestStatus === 'fulfilled') {
-        setFormData({
-          name: '',
-          calories: '',
-          proteins: '',
-          fats: '',
-          carbohydrates: '',
-        });
-        setSelectedNutrients([]);
         navigate('/foods');
       }
     });
   };
 
-  if (!user) {
+  if (!user || !food || !food.user_id) {
     return (
       <div className={styles.wrapper}>
         <div className={styles.container}>
@@ -127,7 +145,7 @@ const AddFood = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <h2 className={styles.title}>Добавить продукт</h2>
+        <h2 className={styles.title}>Редактировать продукт</h2>
         <div className={styles.card}>
           <form onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
@@ -269,7 +287,7 @@ const AddFood = () => {
                 Отмена
               </button>
               <button type="submit" className={styles.saveBtn} disabled={foodLoading}>
-                {foodLoading ? <img src={spinner} alt="Loading" className={styles.spinnerBtn} /> : 'Добавить'}
+                {foodLoading ? <img src={spinner} alt="Loading" className={styles.spinnerBtn} /> : 'Сохранить'}
               </button>
             </div>
           </form>
@@ -279,4 +297,4 @@ const AddFood = () => {
   );
 };
 
-export default AddFood;
+export default EditFood;

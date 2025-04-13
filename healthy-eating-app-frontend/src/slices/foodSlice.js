@@ -1,3 +1,4 @@
+// src/slices/foodSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -52,6 +53,57 @@ export const fetchFoods = createAsyncThunk(
   }
 );
 
+export const updateFood = createAsyncThunk(
+  'food/updateFood',
+  async (foodData, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().auth;
+      if (!token) {
+        throw new Error('Токен отсутствует');
+      }
+      console.log('Отправка updateFood:', { foodData, token });
+      const response = await axios.patch('/api/foods/update', foodData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return { food: foodData, message: response.data.message };
+    } catch (error) {
+      console.error('Ошибка в updateFood:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        data: foodData,
+      });
+      return rejectWithValue(error.response?.data?.message || 'Ошибка обновления продукта');
+    }
+  }
+);
+
+export const deleteFood = createAsyncThunk(
+  'food/deleteFood',
+  async (foodId, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().auth;
+      if (!token) {
+        throw new Error('Токен отсутствует');
+      }
+      console.log('Отправка deleteFood:', { foodId, token });
+      const response = await axios.delete('/api/foods/delete', {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { foodId },
+      });
+      return { foodId, message: response.data.message };
+    } catch (error) {
+      console.error('Ошибка в deleteFood:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        foodId,
+      });
+      return rejectWithValue(error.response?.data?.message || 'Ошибка удаления продукта');
+    }
+  }
+);
+
 const foodSlice = createSlice({
   name: 'food',
   initialState: {
@@ -95,6 +147,52 @@ const foodSlice = createSlice({
       .addCase(fetchFoods.rejected, (state, action) => {
         state.loading = false;
         state.listError = action.payload;
+      })
+      .addCase(updateFood.pending, (state) => {
+        state.loading = true;
+        state.formError = null;
+        state.success = null;
+      })
+      .addCase(updateFood.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message;
+        const updatedFood = action.payload.food;
+        state.foods = state.foods.map((food) =>
+          food.id === updatedFood.foodId
+            ? {
+                ...food,
+                name: updatedFood.name,
+                calories: updatedFood.calories,
+                proteins: updatedFood.proteins,
+                fats: updatedFood.fats,
+                carbohydrates: updatedFood.carbohydrates,
+                nutrients: updatedFood.nutrients.map((n) => ({
+                  nutrient_id: parseInt(n.nutrient_id),
+                  amount: parseFloat(n.amount),
+                  name: food.nutrients?.find((nut) => nut.nutrient_id === parseInt(n.nutrient_id))?.name || '',
+                  unit: food.nutrients?.find((nut) => nut.nutrient_id === parseInt(n.nutrient_id))?.unit || '',
+                })),
+              }
+            : food
+        );
+      })
+      .addCase(updateFood.rejected, (state, action) => {
+        state.loading = false;
+        state.formError = action.payload;
+      })
+      .addCase(deleteFood.pending, (state) => {
+        state.loading = true;
+        state.formError = null;
+        state.success = null;
+      })
+      .addCase(deleteFood.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message;
+        state.foods = state.foods.filter((food) => food.id !== action.payload.foodId);
+      })
+      .addCase(deleteFood.rejected, (state, action) => {
+        state.loading = false;
+        state.formError = action.payload;
       });
   },
 });

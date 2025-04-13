@@ -1,4 +1,4 @@
-.foods-wrapper {
+.wrapper {
   width: 100%;
   padding: 40px 20px;
   background-color: #f0f2f5;
@@ -7,12 +7,12 @@
   justify-content: center;
 }
 
-.foods-container {
+.container {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
 }
 
-.foods-title {
+.title {
   text-align: center;
   font-size: 32px;
   font-weight: 700;
@@ -22,7 +22,7 @@
   letter-spacing: 1px;
 }
 
-.foods-card {
+.card {
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -32,12 +32,12 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.foods-card:hover {
+.card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
 
-.foods-card h3 {
+.card h3 {
   font-size: 20px;
   font-weight: 600;
   color: #333;
@@ -46,11 +46,11 @@
   padding-left: 10px;
 }
 
-.form-group {
+.formGroup {
   margin-bottom: 20px;
 }
 
-.form-group label {
+.formGroup label {
   display: block;
   font-size: 16px;
   font-weight: 500;
@@ -58,7 +58,7 @@
   margin-bottom: 5px;
 }
 
-.foods-input {
+.input {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -68,20 +68,20 @@
   transition: border-color 0.3s ease;
 }
 
-.foods-input:focus {
+.input:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
-.form-actions {
+.formActions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
-.save-btn {
+.saveBtn {
   padding: 10px 20px;
   font-size: 16px;
   border: none;
@@ -96,16 +96,16 @@
   justify-content: center;
 }
 
-.save-btn:hover {
+.saveBtn:hover {
   background-color: #218838;
 }
 
-.save-btn:disabled {
+.saveBtn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-.cancel-btn {
+.cancelBtn {
   padding: 10px 20px;
   font-size: 16px;
   border: none;
@@ -116,11 +116,11 @@
   transition: background-color 0.3s ease;
 }
 
-.cancel-btn:hover {
+.cancelBtn:hover {
   background-color: #c82333;
 }
 
-.spinner-btn {
+.spinnerBtn {
   width: 20px;
   height: 20px;
   vertical-align: middle;
@@ -147,127 +147,202 @@
   height: 60px;
 }
 
-.foods-table-wrapper {
+.tableWrapper {
   overflow-x: auto;
   margin-bottom: 20px;
 }
 
-.foods-table {
+.table {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   background-color: #ffffff;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.foods-table th,
-.foods-table td {
-  padding: 12px 15px;
+.table th,
+.table td {
+  padding: 14px 20px;
   text-align: left;
   font-size: 16px;
   color: #333;
+  min-width: 80px;
 }
 
-.foods-table th {
+.table th {
   background-color: #e9ecef;
   color: #333;
   font-weight: 600;
   text-transform: uppercase;
 }
 
-.foods-table th.sortable {
+.table .sortable {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.foods-table th.sortable:hover {
+.table .sortable:hover {
   background-color: #d3d7db;
 }
 
-.foods-table tbody tr {
+.table tbody tr {
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s ease;
 }
 
-.foods-table tbody tr:hover {
+.table tbody tr:hover {
   background-color: #f8f9fa;
 }
 
-.foods-table tbody tr:last-child {
+.table tbody tr:last-child {
   border-bottom: none;
 }
 
-.foods-table td {
+.table td {
   font-weight: 500;
 }
 
-.nutrients-list {
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  min-width: 100px; /* Название */
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  min-width: 130px; /* Нутриенты */
+}
+
+.table th:nth-child(8),
+.table td:nth-child(8) {
+  min-width: 100px; /* Действия */
+}
+
+.nutrientsList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.nutrients-list li {
+.nutrientsList li {
   font-size: 14px;
   color: #555;
   margin-bottom: 4px;
 }
 
-.nutrients-list li:last-child {
+.nutrientsList li:last-child {
   margin-bottom: 0;
 }
 
-.nutrient-row {
+.nutrientRow {
   display: flex;
   gap: 10px;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.nutrient-select {
+.nutrientSelect {
   flex: 3;
-  min-width: 400px;
+  min-width: 200px;
 }
 
-.nutrient-amount {
+.nutrientAmount {
   flex: 2;
-  min-width: 300px;
+  min-width: 120px;
 }
 
-.add-nutrient-btn,
-.remove-nutrient-btn {
+.addNutrientBtn,
+.removeNutrientBtn {
   padding: 6px 10px;
-  font-size: 20px;
+  font-size: 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.add-nutrient-btn {
+.addNutrientBtn {
   background-color: #007bff;
   color: white;
 }
 
-.add-nutrient-btn:hover {
+.addNutrientBtn:hover {
   background-color: #0056b3;
 }
 
-.add-nutrient-btn:disabled {
+.addNutrientBtn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-.remove-nutrient-btn {
+.removeNutrientBtn {
   background-color: #dc3545;
   color: white;
 }
 
-.remove-nutrient-btn:hover {
+.removeNutrientBtn:hover {
   background-color: #c82333;
 }
 
-.remove-nutrient-btn:disabled {
+.removeNutrientBtn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  height: 28px;
+  flex-wrap: nowrap;
+  margin: 0;
+}
+
+.editBtn,
+.deleteBtn {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  line-height: 1;
+  box-sizing: border-box;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.editBtn {
+  background-color: #007bff;
+  color: white;
+}
+
+.editBtn:hover {
+  background-color: #0056b3;
+}
+
+.deleteBtn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.deleteBtn:hover {
+  background-color: #c82333;
+}
+
+.deleteBtn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 1;
 }

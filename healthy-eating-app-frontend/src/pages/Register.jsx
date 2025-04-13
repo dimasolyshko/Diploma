@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../slices/authSlice';
-import spinner from '../assets/spinner.gif'; 
-import './Register.css';
+import spinner from '../assets/spinner.gif';
+import styles from './Register.module.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -35,43 +35,89 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
+    <div className={styles.container}>
       <h2>Регистрация</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Имя:</label>
-          <input name="username" value={formData.username} onChange={handleChange} required />
+          <input
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Email:</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Пароль:</label>
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Вес (кг):</label>
-          <input type="number" name="weight" value={formData.weight} onChange={handleChange} required />
+          <input
+            type="number"
+            name="weight"
+            value={formData.weight}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Рост (см):</label>
-          <input type="number" name="height" value={formData.height} onChange={handleChange} required />
+          <input
+            type="number"
+            name="height"
+            value={formData.height}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Возраст:</label>
-          <input type="number" name="age" value={formData.age} onChange={handleChange} required />
+          <input
+            type="number"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Пол:</label>
-          <select name="gender" value={formData.gender} onChange={handleChange}>
+          <select name="gender" value={formData.gender} onChange={handleChange} className={styles.select}>
             <option value="male">Мужской</option>
             <option value="female">Женский</option>
           </select>
         </div>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Уровень активности:</label>
-          <select name="activity_level" value={formData.activity_level} onChange={handleChange}>
+          <select
+            name="activity_level"
+            value={formData.activity_level}
+            onChange={handleChange}
+            className={styles.select}
+          >
             <option value="sedentary">Сидячий</option>
             <option value="light">Лёгкий</option>
             <option value="moderate">Умеренный</option>
@@ -79,9 +125,9 @@ const Register = () => {
             <option value="very_active">Очень активный</option>
           </select>
         </div>
-        {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? <img src={spinner} alt="Loading" className="spinner" /> : 'Зарегистрироваться'}
+        {error && <p className={styles.error}>{error}</p>}
+        <button type="submit" className={styles.submitBtn} disabled={loading}>
+          {loading ? <img src={spinner} alt="Loading" className={styles.spinner} /> : 'Зарегистрироваться'}
         </button>
       </form>
     </div>

@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
@@ -12,6 +11,7 @@ import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import FoodsList from './pages/FoodsList';
 import AddFood from './pages/AddFood';
+import EditFood from './pages/EditFood';
 import './App.css';
 
 function App() {
@@ -69,6 +69,14 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+          path="/foods/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditFood />
+            </PrivateRoute>
+          }
+        />
           <Route path="/" element={<div className="welcome">Добро пожаловать в Healthy Eating App!</div>} />
         </Routes>
       </main>
