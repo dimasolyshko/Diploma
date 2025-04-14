@@ -10,7 +10,7 @@ CREATE TABLE users (
 -- Таблица продуктов питания
 CREATE TABLE foods (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
     calories INT NOT NULL,
     proteins FLOAT NOT NULL,
     fats FLOAT NOT NULL,

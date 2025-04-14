@@ -186,7 +186,6 @@ const Diet = () => {
             </div>
           </form>
           {error && <p className={styles.error}>{error}</p>}
-          {success && <p className={styles.success}>{success}</p>}
         </div>
 
         {mealTypes.map((type) => {
