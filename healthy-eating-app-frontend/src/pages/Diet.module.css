@@ -1,0 +1,282 @@
+.wrapper {
+    background-color: #f0f2f5;
+    padding: 40px 20px;
+    min-height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+  }
+  
+  .container {
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  .title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+  }
+  
+  .formCard {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .formTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .formGroup {
+    margin-bottom: 15px;
+  }
+  
+  .formGroup label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .formGroup select,
+  .formGroup input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+  
+  .formGroup select:focus,
+  .formGroup input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  }
+  
+  .formActions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  
+  .submitButton,
+  .cancelButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submitButton {
+    background-color: #28a745;
+    color: #ffffff;
+  }
+  
+  .submitButton:hover:not(:disabled) {
+    background-color: #218838;
+  }
+  
+  .submitButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .cancelButton {
+    background-color: #dc3545;
+    color: #ffffff;
+  }
+  
+  .cancelButton:hover {
+    background-color: #c82333;
+  }
+  
+  .error {
+    color: #dc3545;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .success {
+    color: #28a745;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .tableCard {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .tableTitle {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 16px;
+  }
+  
+  .table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .table td {
+    color: #555;
+  }
+  
+  .empty {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+  }
+  
+  .actionButtons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    height: 28px;
+    flex-wrap: nowrap;
+    margin: 0;
+  }
+  
+  .editButton,
+  .deleteButton {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    line-height: 1;
+    box-sizing: border-box;
+    margin: 0;
+    vertical-align: middle;
+  }
+  
+  .editButton {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .editButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .deleteButton {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .deleteButton:hover {
+    background-color: #c82333;
+  }
+  
+  .deleteButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .message {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    margin-top: 50px;
+  }
+  
+  .hideOnSmall {
+    display: table-cell;
+  }
+  
+  @media (max-width: 600px) {
+    .hideOnSmall {
+      display: none;
+    }
+  
+    .table th,
+    .table td {
+      padding: 8px;
+      font-size: 14px;
+    }
+  
+    .title {
+      font-size: 24px;
+    }
+  
+    .formTitle,
+    .tableTitle {
+      font-size: 18px;
+    }
+  
+    .actionButtons {
+      gap: 6px;
+    }
+  
+    .editButton,
+    .deleteButton {
+      padding: 3px 6px;
+      font-size: 11px;
+      height: 22px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .wrapper {
+      padding: 20px 10px;
+    }
+  
+    .formGroup select,
+    .formGroup input {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .submitButton,
+    .cancelButton {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  
+    .editButton,
+    .deleteButton {
+      padding: 2px 5px;
+      font-size: 10px;
+      height: 20px;
+    }
+  }

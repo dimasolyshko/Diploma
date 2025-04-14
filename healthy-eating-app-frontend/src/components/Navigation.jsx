@@ -29,6 +29,12 @@ const Navigation = () => {
         >
           Продукты
         </NavLink>
+        <NavLink
+          to="/diet"
+          className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
+        >
+          Рацион
+        </NavLink>
       </div>
     </nav>
   );

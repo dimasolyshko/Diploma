@@ -12,6 +12,7 @@ import PrivateRoute from './components/PrivateRoute';
 import FoodsList from './pages/FoodsList';
 import AddFood from './pages/AddFood';
 import EditFood from './pages/EditFood';
+import Diet from './pages/Diet';
 import './App.css';
 
 function App() {
@@ -70,13 +71,21 @@ function App() {
             }
           />
           <Route
-          path="/foods/edit/:id"
-          element={
-            <PrivateRoute>
-              <EditFood />
-            </PrivateRoute>
-          }
-        />
+            path="/foods/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditFood />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/diet"
+            element={
+              <PrivateRoute>
+                <Diet />
+              </PrivateRoute>
+            }
+          />
           <Route path="/" element={<div className="welcome">Добро пожаловать в Healthy Eating App!</div>} />
         </Routes>
       </main>
