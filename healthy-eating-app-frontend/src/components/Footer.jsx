@@ -1,9 +1,10 @@
+// src/components/Footer.jsx
 import React from 'react';
-import './Footer.css'; 
+import styles from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className={styles.footer}>
       <p>© 2025 Healthy Eating App. Все права защищены.</p>
     </footer>
   );

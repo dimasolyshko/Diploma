@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, fetchUserInfo } from '../slices/authSlice';
-import './Header.css';
+import styles from './Header.module.css';
 
 const Header = () => {
   const { token, user } = useSelector((state) => state.auth);
@@ -19,23 +19,25 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
-      <div className="header-content">
-        <h1 className="logo">
+    <header className={styles.header}>
+      <div className={styles.content}>
+        <h1 className={styles.logo}>
           <Link to="/">Healthy Eating</Link>
         </h1>
-        <nav className="nav">
+        <nav className={styles.nav}>
           {token ? (
-            <div className="auth-nav">
-              <Link to="/profile" className="nav-link">{user?.username || ''}</Link>
-              <button className="logout-btn" onClick={handleLogout}>
+            <div className={styles.authNav}>
+              <Link to="/profile" className={styles.navLink}>
+                {user?.username || ''}
+              </Link>
+              <button className={styles.logoutBtn} onClick={handleLogout}>
                 Выйти
               </button>
             </div>
           ) : (
-            <div className="unauth-nav">
-              <Link to="/login" className="nav-link">Войти</Link>
-              <Link to="/register" className="nav-link">Регистрация</Link>
+            <div className={styles.unauthNav}>
+              <Link to="/login" className={styles.navLink}>Войти</Link>
+              <Link to="/register" className={styles.navLink}>Регистрация</Link>
             </div>
           )}
         </nav>
