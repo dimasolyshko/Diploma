@@ -103,13 +103,42 @@ export const deleteFood = createAsyncThunk(
   }
 );
 
+export const fetchDailyStats = createAsyncThunk(
+  'food/fetchDailyStats',
+  async (date, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().auth;
+      if (!token) {
+        throw new Error('Токен отсутствует');
+      }
+      console.log('Запрос fetchDailyStats:', { date, token });
+      const response = await axios.get('/api/foods/stats', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { date }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка в fetchDailyStats:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        date,
+      });
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки статистики');
+    }
+  }
+);
+
 const foodSlice = createSlice({
   name: 'food',
   initialState: {
     foods: [],
+    stats: null,
     loading: false,
+    statsLoading: false,
     listError: null,
     formError: null,
+    statsError: null,
     success: null,
   },
   reducers: {
@@ -192,6 +221,18 @@ const foodSlice = createSlice({
       .addCase(deleteFood.rejected, (state, action) => {
         state.loading = false;
         state.formError = action.payload;
+      })
+      .addCase(fetchDailyStats.pending, (state) => {
+        state.statsLoading = true;
+        state.statsError = null;
+      })
+      .addCase(fetchDailyStats.fulfilled, (state, action) => {
+        state.statsLoading = false;
+        state.stats = action.payload;
+      })
+      .addCase(fetchDailyStats.rejected, (state, action) => {
+        state.statsLoading = false;
+        state.statsError = action.payload;
       });
   },
 });

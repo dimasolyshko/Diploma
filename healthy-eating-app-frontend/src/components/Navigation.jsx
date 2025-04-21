@@ -35,6 +35,13 @@ const Navigation = () => {
         >
           Рацион
         </NavLink>
+        <NavLink
+          to="/stats"
+          className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
+        >
+          Статистика
+        </NavLink>
+        
       </div>
     </nav>
   );

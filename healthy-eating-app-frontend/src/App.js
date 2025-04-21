@@ -13,6 +13,7 @@ import FoodsList from './pages/FoodsList';
 import AddFood from './pages/AddFood';
 import EditFood from './pages/EditFood';
 import Diet from './pages/Diet';
+import Stats from './pages/Stats';
 import './App.css';
 
 function App() {
@@ -83,6 +84,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Diet />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/stats"
+            element={
+              <PrivateRoute>
+                <Stats />
               </PrivateRoute>
             }
           />
