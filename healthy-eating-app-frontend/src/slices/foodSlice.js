@@ -129,6 +129,20 @@ export const fetchDailyStats = createAsyncThunk(
   }
 );
 
+export const fetchWeeklyStats = createAsyncThunk(
+  'food/fetchWeeklyStats',
+  async (date, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/foods/stats/weekly?date=${date}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки недельной статистики');
+    }
+  }
+);
+
 const foodSlice = createSlice({
   name: 'food',
   initialState: {
@@ -231,6 +245,18 @@ const foodSlice = createSlice({
         state.stats = action.payload;
       })
       .addCase(fetchDailyStats.rejected, (state, action) => {
+        state.statsLoading = false;
+        state.statsError = action.payload;
+      })
+      .addCase(fetchWeeklyStats.pending, (state) => {
+        state.statsLoading = true;
+        state.statsError = null;
+      })
+      .addCase(fetchWeeklyStats.fulfilled, (state, action) => {
+        state.statsLoading = false;
+        state.stats = action.payload;
+      })
+      .addCase(fetchWeeklyStats.rejected, (state, action) => {
         state.statsLoading = false;
         state.statsError = action.payload;
       });

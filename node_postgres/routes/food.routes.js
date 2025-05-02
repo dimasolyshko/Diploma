@@ -17,5 +17,7 @@ router.patch('/log', authMiddleware, FoodController.updateFoodLog);
 
 router.get('/daily', authMiddleware, FoodController.getDailyFood);
 router.get('/stats', authMiddleware, FoodController.getDailyStats);
+router.get('/stats/weekly', authMiddleware, FoodController.getWeeklyStats);
+
 
 module.exports = router;

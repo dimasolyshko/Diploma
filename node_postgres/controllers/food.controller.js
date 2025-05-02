@@ -505,6 +505,102 @@ class FoodController {
       res.status(500).json({ message: 'Ошибка сервера' });
     }
   }
+  async getWeeklyStats(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { date } = req.query;
+  
+      if (!date) {
+        return res.status(400).json({ message: 'Параметр date обязателен' });
+      }
+  
+      // Определяем диапазон недели (7 дней, включая указанную дату)
+      const endDate = `${date} 23:59:59`;
+      const startDate = new Date(date);
+      startDate.setDate(startDate.getDate() - 6);
+      const startOfWeek = `${startDate.toISOString().split('T')[0]} 00:00:00`;
+  
+      const stats = await pool.query(
+        `
+        WITH nutrient_sums AS (
+          SELECT 
+            n.id AS nutrient_id,
+            n.name,
+            n.unit,
+            SUM(fn.amount * uf.portion_size / 100) AS total_amount
+          FROM user_foods uf
+          JOIN foods f ON uf.food_id = f.id
+          LEFT JOIN food_nutrients fn ON f.id = fn.food_id
+          LEFT JOIN nutrients n ON fn.nutrient_id = n.id
+          WHERE uf.user_id = $1 
+            AND uf.consumed_at BETWEEN $2 AND $3
+            AND fn.nutrient_id IS NOT NULL
+          GROUP BY n.id, n.name, n.unit
+        )
+        SELECT 
+          COALESCE(SUM(f.calories * uf.portion_size / 100), 0) AS total_calories,
+          COALESCE(SUM(f.proteins * uf.portion_size / 100), 0) AS total_proteins,
+          COALESCE(SUM(f.fats * uf.portion_size / 100), 0) AS total_fats,
+          COALESCE(SUM(f.carbohydrates * uf.portion_size / 100), 0) AS total_carbohydrates,
+          COALESCE(
+            (SELECT json_agg(
+              json_build_object(
+                'nutrient_id', nutrient_id,
+                'name', name,
+                'unit', unit,
+                'amount', total_amount
+              )
+            ) FROM nutrient_sums),
+            '[]'::json
+          ) AS nutrients
+        FROM user_foods uf
+        JOIN foods f ON uf.food_id = f.id
+        WHERE uf.user_id = $1 
+          AND uf.consumed_at BETWEEN $2 AND $3
+        `,
+        [userId, startOfWeek, endDate]
+      );
+  
+      if (stats.rows.length === 0) {
+        return res.json({
+          total_calories: 0,
+          total_proteins: 0,
+          total_fats: 0,
+          total_carbohydrates: 0,
+          nutrients: [],
+          bju_ratios: { proteins: 0, fats: 0, carbohydrates: 0 }
+        });
+      }
+  
+      const { total_calories, total_proteins, total_fats, total_carbohydrates, nutrients } = stats.rows[0];
+  
+      const total_calories_from_bju = 
+        (total_proteins * 4) + (total_fats * 9) + (total_carbohydrates * 4);
+      const bju_ratios = {
+        proteins: total_calories_from_bju > 0 ? (total_proteins * 4 / total_calories_from_bju * 100).toFixed(1) : 0,
+        fats: total_calories_from_bju > 0 ? (total_fats * 9 / total_calories_from_bju * 100).toFixed(1) : 0,
+        carbohydrates: total_calories_from_bju > 0 ? (total_carbohydrates * 4 / total_calories_from_bju * 100).toFixed(1) : 0
+      };
+  
+      res.json({
+        total_calories: parseFloat(total_calories ? total_calories.toFixed(1) : 0),
+        total_proteins: parseFloat(total_proteins ? total_proteins.toFixed(1) : 0),
+        total_fats: parseFloat(total_fats ? total_fats.toFixed(1) : 0),
+        total_carbohydrates: parseFloat(total_carbohydrates ? total_carbohydrates.toFixed(1) : 0),
+        nutrients: nutrients.filter(n => n.amount > 0),
+        bju_ratios
+      });
+    } catch (error) {
+      console.error('Ошибка в getWeeklyStats:', {
+        message: error.message,
+        stack: error.stack,
+        query: req.query,
+        userId: req.user?.userId,
+      });
+      res.status(500).json({ message: 'Ошибка сервера' });
+    }
+  }
 }
+
 
 module.exports = new FoodController();
